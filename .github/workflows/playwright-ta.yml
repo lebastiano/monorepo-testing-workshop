@@ -14,6 +14,8 @@ jobs:
           environment: Preview – monorepo-testing-workshop-test-automation
           token: ${{ secrets.GITHUB_TOKEN }}
           max_timeout: 60
+      - run: echo ${{steps.waitFor200.outputs.url}}
+
 
   playwright-ta:
     needs: vercel-ta
@@ -34,9 +36,9 @@ jobs:
           cache: "pnpm"
 
       - name: Show preview url
-        run: echo ${{ needs.vercel-ta.outputs.preview_url }}
+        run: echo ${{ needs.vercel-ta.outputs.url }}
 
       - name: Run Playwright tests
         run: pnpm --filter test-automation run e2e
         env:
-          PLAYWRIGHT_BASE_URL: ${{ needs.vercel-ta.outputs.preview_url }}
+          PLAYWRIGHT_BASE_URL: ${{ needs.vercel-ta.outputs.url }}
