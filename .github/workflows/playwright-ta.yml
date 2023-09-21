@@ -6,15 +6,17 @@ jobs:
   vercel-ta:
     name: Wait for Vercel (test-automation)
     runs-on: ubuntu-latest
+    outputs: 
+      preview_url: ${{steps.henk.outputs.url}}
     steps:
       - name: Waiting for 200 from the Vercel Preview
         uses: patrickedqvist/wait-for-vercel-preview@v1.3.1
-        id: waitFor200
+        id: henk
         with:
           environment: Preview – monorepo-testing-workshop-test-automation
           token: ${{ secrets.GITHUB_TOKEN }}
           max_timeout: 60
-      - run: echo ${{steps.waitFor200.outputs.url}}
+      - run: echo ${{steps.henk.outputs.url}}
 
 
   playwright-ta:
@@ -36,9 +38,9 @@ jobs:
           cache: "pnpm"
 
       - name: Show preview url
-        run: echo ${{ needs.vercel-ta.outputs.url }}
+        run: echo ${{ needs.vercel-ta.outputs.preview_url }}
 
       - name: Run Playwright tests
         run: pnpm --filter test-automation run e2e
         env:
-          PLAYWRIGHT_BASE_URL: ${{ needs.vercel-ta.outputs.url }}
+          PLAYWRIGHT_BASE_URL: ${{ needs.vercel-ta.outputs.preview_url }}
